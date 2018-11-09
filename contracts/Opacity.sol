@@ -123,6 +123,8 @@ contract Opacity {
    */
   function amendClaim(uint8 claimAmountSet, uint8 payAmountSet, uint8 feeAmountSet, uint8 accuracy) public onlyDirector returns (bool success) {
     require(claimAmountSet == (payAmountSet + feeAmountSet));
+    require(payAmountSet < claimAmountSet);
+    require(feeAmountSet < claimAmountSet);
 
     claimAmount = claimAmountSet * 10 ** (uint256(decimals) - accuracy);
     payAmount = payAmountSet * 10 ** (uint256(decimals) - accuracy);
