@@ -2,8 +2,8 @@ pragma solidity ^0.4.18;
 
 interface tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public; }
 
-contract OysterPearl {
-  // Public variables of PRL
+contract Opacity {
+  // Public variables of OPQ
   string public name;
   string public symbol;
   uint8 public decimals;
@@ -44,29 +44,19 @@ contract OysterPearl {
    *
    * Initializes contract
    */
-  function OysterPearl() public payable {
+  function Opacity() public payable {
     director = msg.sender;
-    name = "Oyster Pearl";
-    symbol = "PRL";
+    name = "Opacity";
+    symbol = "OPQ";
     decimals = 18;
-    saleClosed = true;
     directorLock = false;
     funds = 0;
-    totalSupply = 0;
+    totalSupply = 130000000 * 10 ** uint256(decimals);
 
-    // Marketing share (5%)
-    totalSupply += 25000000 * 10 ** uint256(decimals);
-
-    // Devfund share (15%)
-    totalSupply += 75000000 * 10 ** uint256(decimals);
-
-    // Allocation to match PREPRL supply and reservation for discretionary use
-    totalSupply += 8000000 * 10 ** uint256(decimals);
-
-    // Assign reserved PRL supply to the director
+    // Assign reserved OPQ supply to the director
     balances[director] = totalSupply;
 
-    // Define default values for Oyster functions
+    // Define default values for Opacity functions
     claimAmount = 5 * 10 ** (uint256(decimals) - 1);
     payAmount = 4 * 10 ** (uint256(decimals) - 1);
     feeAmount = 1 * 10 ** (uint256(decimals) - 1);
@@ -86,7 +76,7 @@ contract OysterPearl {
   }
 
   modifier onlyDirector {
-    // Director can lock themselves out to complete decentralization of Oyster network
+    // Director can lock themselves out to complete decentralization of Opacity
     // An alternative is that another smart contract could become the decentralized director
     require(!directorLock);
 
@@ -116,13 +106,11 @@ contract OysterPearl {
   }
 
   /**
-   * Permanently lock out the director to decentralize Oyster
-   * Invocation is discretionary because Oyster might be better suited to
+   * Permanently lock out the director to decentralize Opacity
+   * Invocation is discretionary because Opacity might be better suited to
    * transition to an artificially intelligent smart contract director
    */
   function selfLock() public payable onlyDirector {
-    // The sale must be closed before the director gets locked out
-    require(saleClosed);
 
     // Prevents accidental lockout
     require(msg.value == 10 ether);
@@ -162,33 +150,6 @@ contract OysterPearl {
   }
 
   /**
-   * Director can close the crowdsale
-   */
-  function closeSale() public onlyDirector returns (bool success) {
-    // The sale must be currently open
-    require(!saleClosed);
-
-    // Lock the crowdsale
-    saleClosed = true;
-    return true;
-  }
-
-  /**
-   * Director can open the crowdsale
-   */
-  function openSale() public onlyDirector returns (bool success) {
-    // The sale must be currently closed
-    require(saleClosed);
-
-    // Unlock the crowdsale
-    saleClosed = false;
-    return true;
-  }
-
-  /**
-   * Oyster Protocol Function
-   * More information at https://oyster.ws/OysterWhitepaper.pdf
-   *
    * Bury an address
    *
    * When an address is buried; only claimAmount can be withdrawn once per epoch
@@ -215,10 +176,7 @@ contract OysterPearl {
   }
 
   /**
-   * Oyster Protocol Function
-   * More information at https://oyster.ws/OysterWhitepaper.pdf
-   *
-   * Claim PRL from a buried address
+   * Claim OPQ from a buried address
    *
    * If a prior claim wasn't made during the current epoch, then claimAmount can be withdrawn
    *
@@ -253,10 +211,10 @@ contract OysterPearl {
     // Remove claimAmount from the buried address
     balances[msg.sender] -= claimAmount;
 
-    // Pay the website owner that invoked the web node that found the PRL seed key
+    // Pay the website owner that invoked the web node that found the OPQ seed key
     balances[_payout] += payAmount;
 
-    // Pay the broker node that unlocked the PRL
+    // Pay the broker node that unlocked the OPQ
     balances[_fee] += feeAmount;
 
     // Execute events to reflect the changes
@@ -267,35 +225,6 @@ contract OysterPearl {
     // Failsafe logic that should never be false
     assert(balances[msg.sender] + balances[_payout] + balances[_fee] == previousBalances);
     return true;
-  }
-
-  /**
-   * Crowdsale function
-   */
-  function () public payable {
-    // Check if crowdsale is still active
-    require(!saleClosed);
-
-    // Minimum amount is 1 finney
-    require(msg.value >= 1 finney);
-
-    // Price is 1 ETH = 5000 PRL
-    uint256 amount = msg.value * 5000;
-
-    // totalSupply limit is 500 million PRL
-    require(totalSupply + amount <= (500000000 * 10 ** uint256(decimals)));
-
-    // Increases the total supply
-    totalSupply += amount;
-
-    // Adds the amount to the balance
-    balances[msg.sender] += amount;
-
-    // Track ETH amount raised
-    funds += msg.value;
-
-    // Execute an event reflecting the change
-    Transfer(this, msg.sender, amount);
   }
 
   /**
