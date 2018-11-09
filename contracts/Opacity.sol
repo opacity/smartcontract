@@ -125,7 +125,6 @@ contract Opacity {
     require(claimAmountSet == (payAmountSet + feeAmountSet));
     require(payAmountSet < claimAmountSet);
     require(feeAmountSet < claimAmountSet);
-    // this will never fail because it's a uint
     require(claimAmountSet > 0);
     require(payAmountSet > 0);
     require(feeAmountSet > 0);
