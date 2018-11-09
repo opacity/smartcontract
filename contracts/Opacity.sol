@@ -10,7 +10,6 @@ contract Opacity {
   uint256 public totalSupply;
   uint256 public funds;
   address public director;
-  bool public saleClosed;
   bool public directorLock;
   uint256 public claimAmount;
   uint256 public payAmount;
