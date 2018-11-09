@@ -125,6 +125,10 @@ contract Opacity {
     require(claimAmountSet == (payAmountSet + feeAmountSet));
     require(payAmountSet < claimAmountSet);
     require(feeAmountSet < claimAmountSet);
+    // this will never fail because it's a uint
+    require(claimAmountSet > 0);
+    require(payAmountSet > 0);
+    require(feeAmountSet > 0);
 
     claimAmount = claimAmountSet * 10 ** (uint256(decimals) - accuracy);
     payAmount = payAmountSet * 10 ** (uint256(decimals) - accuracy);
