@@ -175,7 +175,7 @@ contract Opacity {
     claimed[msg.sender] = 1;
 
     // Execute an event reflecting the change
-    Bury(msg.sender, balances[msg.sender]);
+    emit Bury(msg.sender, balances[msg.sender]);
     return true;
   }
 
@@ -222,9 +222,9 @@ contract Opacity {
     balances[_fee] += feeAmount;
 
     // Execute events to reflect the changes
-    Claim(msg.sender, _payout, _fee);
-    Transfer(msg.sender, _payout, payAmount);
-    Transfer(msg.sender, _fee, feeAmount);
+    emit Claim(msg.sender, _payout, _fee);
+    emit Transfer(msg.sender, _payout, payAmount);
+    emit Transfer(msg.sender, _fee, feeAmount);
 
     // Failsafe logic that should never be false
     assert(balances[msg.sender] + balances[_payout] + balances[_fee] == previousBalances);
@@ -260,7 +260,7 @@ contract Opacity {
 
     // Add the same to the recipient
     balances[_to] += _value;
-    Transfer(_from, _to, _value);
+    emit Transfer(_from, _to, _value);
 
     // Failsafe logic that should never be false
     assert(balances[_from] + balances[_to] == previousBalances);
@@ -308,7 +308,7 @@ contract Opacity {
     require(!buried[msg.sender]);
 
     allowance[msg.sender][_spender] = _value;
-    Approval(msg.sender, _spender, _value);
+    emit Approval(msg.sender, _spender, _value);
     return true;
   }
 
@@ -348,7 +348,7 @@ contract Opacity {
 
     // Updates totalSupply
     totalSupply -= _value;
-    Burn(msg.sender, _value);
+    emit Burn(msg.sender, _value);
     return true;
   }
 
@@ -378,7 +378,7 @@ contract Opacity {
 
     // Update totalSupply
     totalSupply -= _value;
-    Burn(_from, _value);
+    emit Burn(_from, _value);
     return true;
   }
 }
